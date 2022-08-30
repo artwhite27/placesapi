@@ -1,6 +1,7 @@
 package com.simpleplaces.api.controller;
 
 import com.google.maps.errors.ApiException;
+import com.simpleplaces.api.dto.PlaceInfo;
 import com.simpleplaces.api.service.PlacesService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,7 +19,7 @@ public class PlacesController {
     private final PlacesService placesService;
 
     @GetMapping("/{name}")
-    Object getPlaceInfoByName(@PathVariable String name) throws IOException, InterruptedException, ApiException {
+    PlaceInfo getPlaceInfoByName(@PathVariable String name) throws IOException, InterruptedException, ApiException {
         return placesService.getPlaceInfoByName(name);
     }
 }
