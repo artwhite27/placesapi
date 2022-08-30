@@ -21,14 +21,7 @@ public class PlacesService {
         String placeId = placesApiClient.findPlaceFromText(name).candidates[0].placeId;
         PlaceDetails result = placesApiClient.getPlaceDetails(placeId);
 
-        return PlaceInfo.builder()
-                .placeId(placeId)
-                .name(result.name)
-                .address(result.adrAddress)
-                .rating(result.rating)
-                .totalUserRatings(result.userRatingsTotal)
-                .website(result.website == null ? null : result.website.toString())
-                .build();
+        return getPlaceInfo(result);
     }
 
     public AutocompletePrediction[] getAutocompleteSuggestions(String input) {
@@ -37,13 +30,28 @@ public class PlacesService {
 
     public Set<PlaceInfo> findPlacesByType(PlaceType placeType) {
         return Arrays.stream(placesApiClient.findPlacesByType(placeType).results)
-                .map(item -> PlaceInfo.builder()
-                        .placeId(item.placeId)
-                        .address(item.formattedAddress)
-                        .name(item.name)
-                        .rating(item.rating)
-                        .totalUserRatings(item.userRatingsTotal)
-                        .build())
+                .map(this::getPlaceInfo)
                 .collect(Collectors.toSet());
+    }
+
+    private PlaceInfo getPlaceInfo(PlaceDetails item) {
+        return PlaceInfo.builder()
+                .placeId(item.placeId)
+                .name(item.name)
+                .address(item.adrAddress)
+                .rating(item.rating)
+                .totalUserRatings(item.userRatingsTotal)
+                .website(item.website == null ? null : item.website.toString())
+                .build();
+    }
+
+    private PlaceInfo getPlaceInfo(PlacesSearchResult item) {
+        return PlaceInfo.builder()
+                .placeId(item.placeId)
+                .address(item.formattedAddress)
+                .name(item.name)
+                .rating(item.rating)
+                .totalUserRatings(item.userRatingsTotal)
+                .build();
     }
 }

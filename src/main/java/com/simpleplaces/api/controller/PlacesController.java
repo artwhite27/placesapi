@@ -2,7 +2,6 @@ package com.simpleplaces.api.controller;
 
 import com.google.maps.model.AutocompletePrediction;
 import com.google.maps.model.PlaceType;
-import com.google.maps.model.PlacesSearchResult;
 import com.simpleplaces.api.dto.PlaceInfo;
 import com.simpleplaces.api.service.PlacesService;
 import lombok.RequiredArgsConstructor;
