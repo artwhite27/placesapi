@@ -1,13 +1,13 @@
 package com.simpleplaces.api.client;
 
-import com.google.maps.FindPlaceFromTextRequest;
-import com.google.maps.GeoApiContext;
-import com.google.maps.PlacesApi;
+import com.google.maps.*;
 import com.google.maps.model.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ResponseStatusException;
+
+import java.util.function.Function;
 
 @Component
 @RequiredArgsConstructor
@@ -16,35 +16,30 @@ public class PlacesApiClient {
     private final GeoApiContext context;
 
     public PlaceDetails getPlaceDetails(String placeId) {
-        try {
-            return PlacesApi.placeDetails(context, placeId).await();
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        return (PlaceDetails)
+                method.apply(PlacesApi.placeDetails(context, placeId));
     }
 
     public FindPlaceFromText findPlaceFromText(String name) {
-        try {
-            return PlacesApi.findPlaceFromText(context, name,
-                    FindPlaceFromTextRequest.InputType.TEXT_QUERY).await();
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        return (FindPlaceFromText)
+                method.apply(PlacesApi.findPlaceFromText(context, name, FindPlaceFromTextRequest.InputType.TEXT_QUERY));
     }
 
     public AutocompletePrediction[] queryAutocomplete(String input) {
-        try {
-            return PlacesApi.queryAutocomplete(context, input).await();
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        return (AutocompletePrediction[])
+                method.apply(PlacesApi.queryAutocomplete(context, input));
     }
 
     public PlacesSearchResponse findPlacesByType(PlaceType placeType) {
+        return (PlacesSearchResponse)
+                method.apply(PlacesApi.textSearchQuery(context, placeType));
+    }
+
+    Function<PendingResult<?>, Object> method = (o) -> {
         try {
-            return PlacesApi.textSearchQuery(context, placeType).await();
+            return o.await();
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
-    }
+    };
 }
