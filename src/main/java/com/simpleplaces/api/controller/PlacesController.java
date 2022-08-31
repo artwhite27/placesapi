@@ -9,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Set;
 
 @RestController
 @RequestMapping("/api/places")
@@ -17,6 +16,11 @@ import java.util.Set;
 public class PlacesController {
 
     private final PlacesService placesService;
+
+    @GetMapping("/{id}")
+    PlaceInfo getPlaceInfoById(@PathVariable String id) {
+        return placesService.getPlaceInfoById(id);
+    }
 
     @GetMapping("/{name}/info")
     PlaceInfo getPlaceInfoByName(@PathVariable String name) {
@@ -30,7 +34,7 @@ public class PlacesController {
 
     @GetMapping("/type")
     List<PlaceInfo> getPlacesByType(@RequestParam(defaultValue = "CAFE") PlaceType placeType,
-                                    @RequestParam(defaultValue = "RATING")SortPlaces sortPlaces) {
+                                    @RequestParam(defaultValue = "RATING") SortPlaces sortPlaces) {
         return placesService.findPlacesByType(placeType, sortPlaces);
     }
 }

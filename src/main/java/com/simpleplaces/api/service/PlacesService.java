@@ -16,6 +16,10 @@ public class PlacesService {
 
     private final PlacesApiClient placesApiClient;
 
+    public PlaceInfo getPlaceInfoById(String id) {
+        return getPlaceInfo(placesApiClient.getPlaceDetails(id));
+    }
+
     public PlaceInfo getPlaceInfoByName(String name) {
 
         String placeId = placesApiClient.findPlaceFromText(name).candidates[0].placeId;
