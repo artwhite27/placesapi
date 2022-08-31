@@ -3,11 +3,11 @@ package com.simpleplaces.api.service;
 import com.google.maps.model.*;
 import com.simpleplaces.api.client.PlacesApiClient;
 import com.simpleplaces.api.dto.PlaceInfo;
+import com.simpleplaces.api.enums.SortPlaces;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -28,10 +28,20 @@ public class PlacesService {
         return placesApiClient.queryAutocomplete(input);
     }
 
-    public Set<PlaceInfo> findPlacesByType(PlaceType placeType) {
+    public List<PlaceInfo> findPlacesByType(PlaceType placeType, SortPlaces sortPlaces) {
         return Arrays.stream(placesApiClient.findPlacesByType(placeType).results)
                 .map(this::getPlaceInfo)
-                .collect(Collectors.toSet());
+                .sorted(getComparator(sortPlaces))
+                .collect(Collectors.toList());
+    }
+
+    private Comparator<PlaceInfo> getComparator(SortPlaces sortPlaces) {
+        return switch (sortPlaces) {
+            case RATING -> Comparator.comparing(PlaceInfo::getRating)
+                    .thenComparing(PlaceInfo::getTotalUserRatings).reversed();
+            case TOTAL_USER_RATINGS -> Comparator.comparing(PlaceInfo::getTotalUserRatings)
+                    .thenComparing(PlaceInfo::getRating).reversed();
+        };
     }
 
     private PlaceInfo getPlaceInfo(PlaceDetails item) {

@@ -3,10 +3,12 @@ package com.simpleplaces.api.controller;
 import com.google.maps.model.AutocompletePrediction;
 import com.google.maps.model.PlaceType;
 import com.simpleplaces.api.dto.PlaceInfo;
+import com.simpleplaces.api.enums.SortPlaces;
 import com.simpleplaces.api.service.PlacesService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Set;
 
 @RestController
@@ -27,7 +29,8 @@ public class PlacesController {
     }
 
     @GetMapping("/type")
-    Set<PlaceInfo> getPlacesByType(@RequestParam PlaceType placeType) {
-        return placesService.findPlacesByType(placeType);
+    List<PlaceInfo> getPlacesByType(@RequestParam(defaultValue = "CAFE") PlaceType placeType,
+                                    @RequestParam(defaultValue = "RATING")SortPlaces sortPlaces) {
+        return placesService.findPlacesByType(placeType, sortPlaces);
     }
 }
